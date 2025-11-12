@@ -1,0 +1,31 @@
+def is_natural_recursive(number: float) -> bool:
+    """
+    Рекурсивно перевіряє, чи є задане число натуральним (цілим та > 0).
+    
+    Параметри:
+    number (float): Число для перевірки.
+    
+    Повертає:
+    bool: True, якщо число натуральне, інакше False.
+    """
+    
+    # Крок 1: Перевірка на ціле число та додатність
+    if number <= 0 or not number.is_integer():
+        return False
+        
+    # Крок 2: Базовий випадок
+    if number == 1:
+        return True
+    
+    # Крок 3: Рекурсивний крок
+    # Рекурсивно перевіряємо, чи є попереднє число (number - 1) натуральним.
+    # Якщо воно натуральне, то й number (за визначенням k+1) також є натуральним.
+    return is_natural_recursive(number - 1)
+
+# --- Приклади використання ---
+
+print(f"5 є натуральним: {is_natural_recursive(5)}")      # True
+print(f"1 є натуральним: {is_natural_recursive(1)}")      # True
+print(f"0 є натуральним: {is_natural_recursive(0)}")      # False
+print(f"-3 є натуральним: {is_natural_recursive(-3)}")    # False
+print(f"2.5 є натуральним: {is_natural_recursive(2.5)}")  # False
