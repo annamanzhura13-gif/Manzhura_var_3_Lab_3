@@ -1,0 +1,106 @@
+def number_to_ukrainian_text(n: int) -> str:
+    """
+    Перетворює ціле число від 0 до 10000 включно на запис українською мовою.
+    """
+    
+    if not (0 <= n <= 10000) or not isinstance(n, int):
+        return "Помилка: Число повинно бути цілим і знаходитися в діапазоні від 0 до 10000."
+
+    if n == 0:
+        return "нуль"
+    
+    # Словники для чисел
+    ones = ["", "один", "два", "три", "чотири", "п'ять", "шість", "сім", "вісім", "дев'ять"]
+    teens = ["десять", "одинадцять", "дванадцять", "тринадцять", "чотирнадцять", 
+             "п'ятнадцять", "шістнадцять", "сімнадцять", "вісімнадцять", "дев'ятнадцять"]
+    tens = ["", "", "двадцять", "тридцять", "сорок", "п'ятдесят", "шістдесят", 
+            "сімдесят", "вісімдесят", "дев'яносто"]
+    hundreds = ["", "сто", "двісті", "триста", "чотириста", "п'ятсот", 
+                "шістсот", "сімсот", "вісімсот", "дев'ятсот"]
+    
+    # Спеціальні форми для 1 і 2 у десятках (для жіночого роду, наприклад, 1000, 2000)
+    ones_gender = {1: "одна", 2: "дві"}
+
+    def get_hundreds_part(num):
+        """Перетворює числа від 1 до 999"""
+        if num == 0:
+            return ""
+            
+        text = []
+        
+        # Сотні
+        h = num // 100
+        if h > 0:
+            text.append(hundreds[h])
+        
+        # Десятки та одиниці
+        rem = num % 100
+        if rem > 0:
+            if 10 <= rem <= 19:
+                # 10-19
+                text.append(teens[rem - 10])
+            else:
+                # 20-99 або 1-9
+                t = rem // 10
+                o = rem % 10
+                if t > 0:
+                    text.append(tens[t])
+                if o > 0:
+                    # Використовуємо звичайні форми одиниць
+                    text.append(ones[o])
+        
+        return " ".join(text)
+
+    # Обробка 10000
+    if n == 10000:
+        return "десять тисяч"
+
+    # Обробка 1000 до 9999
+    if n >= 1000:
+        
+        thousands = n // 1000
+        remainder = n % 1000
+        
+        thousand_text = ""
+        
+        # Обробка кількості тисяч (1, 2-4, 5-9)
+        if thousands == 1:
+            thousand_text = "одна тисяча"
+        elif thousands == 2:
+            thousand_text = "дві тисячі"
+        elif 3 <= thousands <= 4:
+            # Для 3 і 4
+            thousand_text = f"{ones[thousands]} тисячі"
+        else:
+            # Для 5-9
+            thousand_text = f"{get_hundreds_part(thousands)} тисяч"
+            
+        hundreds_part = get_hundreds_part(remainder)
+        
+        if remainder == 0:
+            return thousand_text
+        else:
+            # Заміна "один" і "два" на "одна" і "дві" у залишку (для чисел > 1000)
+            final_remainder_text = hundreds_part.replace("один", "одна").replace("два", "дві")
+
+            return f"{thousand_text} {final_remainder_text}"
+
+    # Обробка 1 до 999
+    return get_hundreds_part(n)
+
+
+# --- Приклади використання ---
+
+print("--- Тестування ---")
+print(f"0: {number_to_ukrainian_text(0)}")         # нуль
+print(f"7: {number_to_ukrainian_text(7)}")         # сім
+print(f"14: {number_to_ukrainian_text(14)}")       # чотирнадцять
+print(f"83: {number_to_ukrainian_text(83)}")       # вісімдесят три
+print(f"100: {number_to_ukrainian_text(100)}")     # сто
+print(f"256: {number_to_ukrainian_text(256)}")     # двісті п'ятдесят шість
+print(f"999: {number_to_ukrainian_text(999)}")     # дев'ятсот дев'яносто дев'ять
+print(f"1000: {number_to_ukrainian_text(1000)}")    # одна тисяча
+print(f"1001: {number_to_ukrainian_text(1001)}")    # одна тисяча одна
+print(f"2023: {number_to_ukrainian_text(2023)}")    # дві тисячі двадцять три
+print(f"5748: {number_to_ukrainian_text(5748)}")    # п'ять тисяч сімсот сорок вісім
+print(f"10000: {number_to_ukrainian_text(10000)}")  # десять тисяч
